@@ -23,7 +23,8 @@ int main (int argc, char *argv[])
 		perror(strerror(errno));
 		return(-1);
 	}
-	p_id = fork();
+	if ((p_id = fork()) == -1)
+		return(-1);
 	if (p_id == 0)
 	{
 		char *test[3];
@@ -31,9 +32,11 @@ int main (int argc, char *argv[])
 		test[1] = argv[1];
 		test[2] = NULL;
 		write(1,"this is the child\n",19);
-		execve(argv[2], test, NULL);
+		execvp(argv[2], test);
 		return(1);
 	}
+	else
+		return(0);
 	//hacer un fork
 	// main se detiene mediante la funcion waitpid
 	// child 1 ejecuta argv[2] invalid argument or succesfull exec
