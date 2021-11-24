@@ -6,4 +6,5 @@
 	static const bool True = 1;
 #  endif
 	bool num_of_args (int argc,int maxargs, int minargs);
+	int error_exit(int error);
 #endif

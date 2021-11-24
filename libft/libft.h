@@ -6,7 +6,7 @@
 /*   By: mgrau <mgrau@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/07 10:27:07 by mgrau             #+#    #+#             */
-/*   Updated: 2021/02/15 14:01:46 by mgrau            ###   ########.fr       */
+/*   Updated: 2021/11/24 13:46:18 by mgrau            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,5 @@ t_list			*ft_lstnew(void *content);
 int				ft_lstsize(t_list *lst);
 void			ft_int_order(int *order, int *var, int size);
 int				*ft_intdup(int *str1, int nsize);
+int 			ft_charcount(char *str, char c);
 #endif

@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_utils.c                                       :+:      :+:    :+:   */
+/*   ft_charcount.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgrau <mgrau@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/24 13:36:39 by mgrau             #+#    #+#             */
-/*   Updated: 2021/11/24 13:45:43 by mgrau            ###   ########.fr       */
+/*   Created: 2021/11/24 13:38:16 by mgrau             #+#    #+#             */
+/*   Updated: 2021/11/24 13:46:22 by mgrau            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "manu_utils.h"
-# include <stdio.h>
-# include <stdlib.h>
-# include "../libft/libft.h"
 
-bool num_of_args (int argc,int maxargs, int minargs)
+int ft_charcount(char *str, char c)
 {
-	if ((argc > maxargs) || (argc < minargs))
-		return(False);
-	return(True);
-}
-
-int error_exit(int error)
-{
-	write(1,strerror(error),ft_strlen(strerror(error)));
-	return(-1);
+	int		i;
+	int		count;
+	
+	count = 0;
+	i = 0;
+	if (!(str))
+		return (0);
+	while (str[i] != '\0')
+	{
+		if (str[i] == c)
+			count += 1;
+		i++;
+	}
+	if (str[i] == c)
+		count += 1;
+	return (count);
 }
