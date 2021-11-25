@@ -9,7 +9,8 @@
 
 char *get_pathname(char *arg, char**envp);
 void init_c_argv(char *c_argv[],char *argv[],char **envp);
-int child_1(char *argv[], char **envp);
+void child_1(char *argv[], char **envp);
+unsigned int	ft_strcharcpy(char *dest, char *src, char until, unsigned int pos);
 
 int main (int argc, char *argv[], char **envp)
 {
@@ -21,9 +22,8 @@ int main (int argc, char *argv[], char **envp)
 	if ((fd_list[0] = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
 		return(error_exit(errno));
 	if ((p_id = fork()) == 0) 										//hacemoss un fork, ahora hay dos procesos
-		return(child_1(argv, envp));						//nos ocupamos del proceso hijo
+		child_1(argv, envp);						//nos ocupamos del proceso hijo
 	wait(0);
-
 // problema, si tengo error en el hijo como termino padre y viceversa
 	// main se detiene mediante la funcion waitpid
 	// child 1 ejecuta argv[2] invalid argument or succesfull exec
@@ -34,55 +34,45 @@ int main (int argc, char *argv[], char **envp)
 
 char *get_pathname(char *arg, char**envp)
 {
-	int i;
+	unsigned int i;
 	int pathlocation = 0;
-	int numofstrings;
-	char **pathlist;
 	char *pathvarstr;
-	///char *tempstr;
-	i = 0;
+	char *tempstr;
 	//first lets check where the =Path is
 	while((ft_strncmp("PATH=",envp[pathlocation],5)))
 		pathlocation++;
 	pathvarstr = ft_strdup(envp[pathlocation] + 5);
-	numofstrings = ft_charcount(envp[pathlocation],':'); //we count the number of : which is equivalent to the number of possible paths
-	pathlist = malloc(sizeof(char*) * (numofstrings)); // malloc de el numero de strings
-	while (i < numofstrings)
-	{
-//		while((strcmp()) // copiar hasta : y añadir a lista
-	//	addtoliststr(pathlist,i,str);
-		i++;
-	}
+	tempstr = malloc(sizeof(char) * ft_strlen(pathvarstr) + 1);
+	i = ft_strcharcpy(tempstr,pathvarstr,':',0);
+
+ //we count the number of : which is equivalent to the number of possible paths
+ // malloc de el numero de strings
+	while()
 
 
 
-	printf("this are the base files %s, %s, this is the possible number of paths: %i\n", arg, pathvarstr, numofstrings);
+
+	printf("this are the base files %s, %s,\n this is the current path %s, this is the pos %i\n", arg, pathvarstr,tempstr,i );
 	return("/bin/cat");
 }
 
-/*
-unsigned int	ft_strcharcpy(char *dest, char *src, char* until)
-{
-	unsigned int	i;
 
+unsigned int	ft_strcharcpy(char *dest, char *src, char until, unsigned int pos)
+{
+	unsigned int i;
 	i = 0;
 	if ((!dest) || (!src))
 		return (0);
-	if (size != 0)
+	while ((src[pos] != '\0' && src[pos] != until))
 	{
-		while ((i + 1 < (size)) && (src[i] != '\0'))
-		{
-			dest[i] = src[i];
-			++i;
-		}
-		dest[i] = 0;
-		i = 0;
+		dest[i] = src[pos];
+		++i;
+		++pos;
 	}
-	while (src[i] != '\0')
-		i++;
-	return (i);
+	dest[i] = 0;
+	return (pos);
 }
-*/
+
 
 void init_c_argv(char *c_argv[],char *argv[],char **envp)
 {
@@ -91,11 +81,13 @@ void init_c_argv(char *c_argv[],char *argv[],char **envp)
 		c_argv[2] = NULL;
 }
 
-int child_1(char *argv[], char **envp)
+void child_1(char *argv[], char **envp)
 {
 	char *c_argv[3];
 	init_c_argv(c_argv, argv, envp);
 	if (execve(c_argv[0], c_argv,envp) == -1)
-		return(error_exit(errno));
-	return(0);
+	{
+		error_exit(errno);
+		exit(0);
+	}
 }
