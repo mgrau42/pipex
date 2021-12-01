@@ -10,29 +10,45 @@
 
 char *get_pathname(char *arg, char* paths);
 void init_c_argv(char *c_argv[],char *argv[],char *paths);
-void child_1(char *argv[], char **envp);
+void child_1(char *argv[], char **envp,int *fd_list);
 unsigned int	ft_strcharcpy(char *dest, char *src, char until, unsigned int pos);
 int create_probable_str(char **dest, char *arg, char *src, int i);
 int get_pathlocation(char **envp);
+void init_c_argv2(char *c_argv[],char *argv[],char *paths);
+void child_2(char *argv[], char **envp, int *fd_list);
 
 int main (int argc, char *argv[], char **envp)
 {
-	int fd_list[3];										
-	int p_id;
+	int fd_list[2];										
 
 	if (!(num_of_args(argc, 5, 5))) 					//comprobamos el numero de argumentos
 		return(error_exit(22));
 	if ((fd_list[0] = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
 		return(error_exit(errno));
-
-	if ((p_id = fork()) == 0) 							//hacemoss un fork, ahora hay dos procesos
-		child_1(argv, envp);							//nos ocupamos del proceso hijo
+	if ((fd_list[1] = open(argv[4],O_RDONLY)) == -1) 	// se abre el primer archivo
+		return(error_exit(errno));
+	pipe(fd_list);
+	if ((fork()) == 0) 							//hacemoss un fork, ahora hay dos procesos
+		child_1(argv, envp,fd_list);							//nos ocupamos del proceso hijo
+/*	else 
+	{
+		if ((fork()) == 0)
+		{
+										//hacemoss un fork, ahora hay dos procesos
+			child_2(argv, envp,fd_list);
+		}	
+	}	
+*/
+	close(fd_list[0]);
+	close(fd_list[1]);
+	wait(0);
 	wait(0);
 														// problema, si tengo error en el hijo como termino padre y viceversa
 														// main se detiene mediante la funcion waitpid
 														// child 1 ejecuta argv[2] invalid argument or succesfull exec
 														// como introducir argv[1] como stdin
 														// a la hora de pasar  salida final a argv[3] comprobar si puedo escribir en el
+
 	return(0);
 }
 
@@ -48,7 +64,6 @@ char *get_pathname(char *arg, char*paths)
 		free(dest);
 		i = create_probable_str(&dest, arg, paths,i);
 	}
-	printf("this is the current path" ANSI_RED "%s" ANSI_RESET "this is the pos %i original path" ANSI_CYAN "%s\n\n" ANSI_RESET,dest,i,(paths) + i);
 	return(dest);
 }
 
@@ -67,7 +82,6 @@ int create_probable_str(char **dest, char *arg, char *src, int i)
 	i = ft_strcharcpy(*dest,(src + i),':',0) + i; 
 	ft_strcat(*dest,"/");
 	ft_strcat(*dest,arg);
-	printf("this is the current path" ANSI_RED "%s" ANSI_RESET "this is the pos %i original path" ANSI_CYAN "%s\n\n" ANSI_RESET,*dest,i,src + i);
 	return(i);
 }
 
@@ -88,14 +102,25 @@ unsigned int	ft_strcharcpy(char *dest, char *src, char until, unsigned int pos)
 
 void init_c_argv(char *c_argv[],char *argv[],char *paths)
 {
+		//modifi this i need falgs, FLAGS!!!
 		c_argv[0] = get_pathname(argv[2], paths);
 		c_argv[1] = argv[1];
 		c_argv[2] = NULL;
 }
-
-void child_1(char *argv[], char **envp)
+/*
+void init_c_argv2(char *c_argv[],char *argv[],char *paths)
+{
+		c_argv[0] = get_pathname(argv[3], paths);
+		c_argv[1] = argv[4];
+		c_argv[2] = NULL;
+}
+*/
+void child_1(char *argv[], char **envp, int *fd_list)
 {
 	char *c_argv[3];
+	dup2(fd_list[0],STDIN_FILENO);
+	close(fd_list[0]);
+	close(fd_list[1]);
 	init_c_argv(c_argv, argv, envp[get_pathlocation(envp)]);
 	if (execve(c_argv[0], c_argv,envp) == -1)
 	{
@@ -103,3 +128,21 @@ void child_1(char *argv[], char **envp)
 		exit(0);
 	}
 }
+/*
+void child_2(char *argv[], char **envp, int *fd_list)
+{
+	char *c_argv[3];
+	dup2(fd_list[1],STDOUT_FILENO);
+	printf("here i am\n %i",STDOUT_FILENO);
+	close(fd_list[0]);
+	close(fd_list[1]);
+	printf("here i am\n");
+	init_c_argv2(c_argv, argv, envp[get_pathlocation(envp)]);
+	printf("c_argv[0] = %s, c_argv[1] = %s, c_argv[2] = %s\n",c_argv[0],c_argv[1],c_argv[2]);
+	if (execve(c_argv[0], c_argv,envp) == -1)
+	{
+		error_exit(errno);
+		exit(0);
+	}
+}
+*/

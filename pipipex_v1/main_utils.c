@@ -25,5 +25,6 @@ bool num_of_args (int argc,int maxargs, int minargs)
 int error_exit(int error)
 {
 	write(1,strerror(error),ft_strlen(strerror(error)));
+	write(1,"\n",2);
 	return(-1);
 }
