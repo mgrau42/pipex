@@ -23,11 +23,11 @@ int main (int argc, char *argv[], char **envp)
 
 	if (!(num_of_args(argc, 5, 5))) 					//comprobamos el numero de argumentos
 		return(error_exit(22));
-	if ((fd_list[0] = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
+/*	if ((fd_list[0] = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
 		return(error_exit(errno));
 	if ((fd_list[1] = open(argv[4],O_RDONLY)) == -1) 	// se abre el primer archivo
 		return(error_exit(errno));
-	pipe(fd_list);
+*/	pipe(fd_list);
 	if ((fork()) == 0) 							//hacemoss un fork, ahora hay dos procesos
 		child_1(argv, envp,fd_list);							//nos ocupamos del proceso hijo
 /*	else 
@@ -106,6 +106,7 @@ void init_c_argv(char *c_argv[],char *argv[],char *paths)
 		c_argv[0] = get_pathname(argv[2], paths);
 		c_argv[1] = argv[1];
 		c_argv[2] = NULL;
+		printf("first command %s", c_argv[0]);
 }
 /*
 void init_c_argv2(char *c_argv[],char *argv[],char *paths)
@@ -117,12 +118,19 @@ void init_c_argv2(char *c_argv[],char *argv[],char *paths)
 */
 void child_1(char *argv[], char **envp, int *fd_list)
 {
-	char *c_argv[3];
-	dup2(fd_list[0],STDIN_FILENO);
+	char **to_exec;
+	int fd_infile;
+	if ((fd_infile = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
+		error_exit(errno);
+	to_exec = ft_split(argv[2],' ');
+	printf("our fd is %i",fd_list[0]);
+	dup2(fd_infile,STDIN_FILENO);
+//	dup2(fd_list[0],STDOUT_FILENO);
+	close(fd_infile);
 	close(fd_list[0]);
 	close(fd_list[1]);
-	init_c_argv(c_argv, argv, envp[get_pathlocation(envp)]);
-	if (execve(c_argv[0], c_argv,envp) == -1)
+	printf("first command %s\n stdindile %i\n", to_exec[0], STDIN_FILENO);
+	if (execve(get_pathname(to_exec[0],envp[get_pathlocation(envp)]),to_exec ,envp) == -1)
 	{
 		error_exit(errno);
 		exit(0);
