@@ -1,5 +1,5 @@
 NAME = pipex
-SOURCE = pipex.c main_utils.c
+SOURCE = pipex.c path_management.c main_utils.c
 OBJS = $(SOURCE:.c=.o)
 LIBFT = 												../libft/libft.a
 CFLAGS = -Wall -Wextra -Werror

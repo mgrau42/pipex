@@ -71,4 +71,6 @@ int				ft_lstsize(t_list *lst);
 void			ft_int_order(int *order, int *var, int size);
 int				*ft_intdup(int *str1, int nsize);
 int 			ft_charcount(char *str, char c);
+unsigned int	ft_strcat(char *dest, char *src);
+unsigned int	ft_strcharcpy(char *dest, char *src, char until, unsigned int pos);
 #endif
