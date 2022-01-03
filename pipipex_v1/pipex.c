@@ -2,52 +2,61 @@
 
 int main (int argc, char *argv[], char **envp)
 {
-	int fd_list[2];
 	int status;
-	int pid;									
+	int pid;	
+//	int num_of_args;								
+	t_ms	s;
 
-	if (!(num_of_args(argc, 5, 5))) 					//comprobamos el numero de argumentos
-		error_exit(22, "Invalid number of args: ", argv[0], EXIT_FAILURE);
-	pipe(fd_list);
-	if ((pid = fork()) == 0)//hacemoss un fork, ahora hay dos procesos
-		child_1(argv, envp,fd_list);					//nos ocupamos del proceso hijo
-	else {
-		if ((pid = fork()) == 0)								//hacemoss un fork, ahora hay dos procesos
-			child_2(argv, envp,fd_list);
-		close_fds(fd_list, NULL);
-	}
-		waitpid(pid, &status, 0);
+	initialize(&s,argc,argv);
+//	num_of_args = argc - 2;
+
+		pipe(s.fd_list);
+		if ((pid = fork()) == 0)//hacemoss un fork, ahora hay dos procesos
+			child_1(argv, envp,&s);					//nos ocupamos del proceso hijo
+		else {
+			if ((pid = fork()) == 0)								//hacemoss un fork, ahora hay dos procesos
+				child_2(argv, envp,&s);
+			close_fds(s.fd_list, NULL);
+		}
+			waitpid(pid, &status, 0);
 	return(WEXITSTATUS(status));
+}
+void initialize(t_ms *s,int argc, char *argv[])
+{
+	if (argc < 5) 					//comprobamos el numero de argumentos
+		error_exit(22, "Invalid number of args: ", argv[0], EXIT_FAILURE);
+	ft_bzero(s, sizeof(t_ms));
+
+
 }
 
 
-void child_1(char *argv[], char **envp, int *fd_list)
+void child_1(char *argv[], char **envp, t_ms *s)
 {
 	char **to_exec;
 	int file_fd;
-	char *temp;
+//	printf("it goes it goes it goes \n");
 
 	if ((file_fd = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
 			error_exit(errno,"Open not succesful: ", argv[1],EXIT_FAILURE);
 
 	to_exec = ft_split(argv[2],' ');
 
-	make_dups(&file_fd, &fd_list[1]);
-	close_fds(fd_list, &file_fd);
+	make_dups(&file_fd, &s->fd_list[1]);
+	close_fds(s->fd_list, &file_fd);
 
-	temp = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
-	if (execve(temp, to_exec ,envp) == -1)
+	s->str = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
+	if (execve(s->str, to_exec ,envp) == -1)
 	{
-		free(temp);
+		free(s->str);
 		free_matrix(to_exec);
 		exit(127);
 	}
 }
 
-void child_2(char *argv[], char **envp, int *fd_list)
+void child_2(char *argv[], char **envp, t_ms *s)
 {
 	char **to_exec;
-	char * temp;
 	int file_fd;
 
 	if ((file_fd = open(argv[4],O_WRONLY | O_CREAT | O_TRUNC | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) == -1) 	// se abre el primer archivo
@@ -55,12 +64,12 @@ void child_2(char *argv[], char **envp, int *fd_list)
 
 	to_exec = ft_split(argv[3],' ');
 
-	make_dups(&fd_list[0], &file_fd);
-	close_fds(fd_list, &file_fd);
-	temp = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
-	if (execve(temp,to_exec ,envp) == -1)
+	make_dups(&s->fd_list[0], &file_fd);
+	close_fds(s->fd_list, &file_fd);
+	s->str = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
+	if (execve(s->str,to_exec ,envp) == -1)
 	{
-		free(temp);
+		free(s->str);
 		free_matrix(to_exec);
 		exit(127);
 	}
