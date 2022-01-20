@@ -6,9 +6,8 @@
 	static const bool True = 1;
 #  endif
 	bool num_of_args (int argc,int maxargs, int minargs);
-	void error_exit(int error, char *str, char *cmd, int status);
+	int error_message(int error, char *str, char *cmd);
 	void	free_matrix(char **matrix);
-	void putstderror(char *message, char *cmd);
 
 /*
 ** system color definition

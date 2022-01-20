@@ -14,9 +14,9 @@ char *get_pathname(char *arg, char*paths)
 	{
 		if (i >= strlen(paths) - 5)
 		{
-			putstderror("Pipex: command not found ", arg);
-			//exit(EXIT_FAILURE);
-			return(dest);
+			free(dest);
+			error_message(errno,"command not found ",arg);
+			return(NULL);
 		}
 		free(dest);
 		i = create_probable_str(&dest, arg, paths,i);
@@ -24,13 +24,13 @@ char *get_pathname(char *arg, char*paths)
 	return(dest);
 }
 
-int get_pathlocation(char **envp)
+char *get_pathlocation(char **envp)
 {
 	int i;
 	i = 0;
 	while((ft_strncmp("PATH=",envp[i],5))) // we got the start location of the portion we want
 		i++;
-	return(i);	
+	return(envp[i]);	
 }
 
 int create_probable_str(char **dest, char *arg, char *src, int i)

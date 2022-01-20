@@ -17,6 +17,7 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
+# include "get_next_line.h"
 
 int				ft_revstrncmp(char *s1, char *s2, unsigned int n);
 char			*ft_strcpy(char *dest, char *src);

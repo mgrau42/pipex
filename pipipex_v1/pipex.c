@@ -2,77 +2,55 @@
 
 int main (int argc, char *argv[], char **envp)
 {
+	t_ppx	ppx;
 	int status;
-	int pid;	
-//	int num_of_args;								
-	t_ms	s;
-
-	initialize(&s,argc,argv);
-//	num_of_args = argc - 2;
-
-		pipe(s.fd_list);
-		if ((pid = fork()) == 0)//hacemoss un fork, ahora hay dos procesos
-			child_1(argv, envp,&s);					//nos ocupamos del proceso hijo
-		else {
-			if ((pid = fork()) == 0)								//hacemoss un fork, ahora hay dos procesos
-				child_2(argv, envp,&s);
-			close_fds(s.fd_list, NULL);
-		}
-			waitpid(pid, &status, 0);
-	return(WEXITSTATUS(status));
-}
-void initialize(t_ms *s,int argc, char *argv[])
-{
-	if (argc < 5) 					//comprobamos el numero de argumentos
-		error_exit(22, "Invalid number of args: ", argv[0], EXIT_FAILURE);
-	ft_bzero(s, sizeof(t_ms));
-
-
-}
-
-
-void child_1(char *argv[], char **envp, t_ms *s)
-{
-	char **to_exec;
-	int file_fd;
-//	printf("it goes it goes it goes \n");
-
-	if ((file_fd = open(argv[1],O_RDONLY)) == -1) 	// se abre el primer archivo
-			error_exit(errno,"Open not succesful: ", argv[1],EXIT_FAILURE);
-
-	to_exec = ft_split(argv[2],' ');
-
-	make_dups(&file_fd, &s->fd_list[1]);
-	close_fds(s->fd_list, &file_fd);
-
-	s->str = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
-	if (execve(s->str, to_exec ,envp) == -1)
+	initialize(&ppx,&argc,&argv,&envp);
+	pied_piper(ppx.cmd);
+	if(file_opener(argv[1], argv[argc - 1], ppx.heredoc, ppx.cmd) < 0)
 	{
-		free(s->str);
-		free_matrix(to_exec);
-		exit(127);
+		finisher(&ppx);
+		return(errno);
+	}
+	status = executer(&ppx.cmd,ppx.path,envp);
+	finisher(&ppx);
+	return(status);
+}
+
+void finisher(t_ppx *ppx) 
+{
+	del_cmd_lst(ppx->cmd);
+	if(ppx->heredoc)
+		unlink("/tmp/heredoc");
+}
+
+void pied_piper(t_ms *cmd)
+{
+	int fd_tmp[2];
+
+	while(cmd->nextcmd)
+	{
+		pipe(fd_tmp);
+		cmd->fd_list[1] = fd_tmp[1];
+		cmd->nextcmd->fd_list[0] = fd_tmp[0];
+		cmd->nextcmd->prev = cmd->fd_list;
+		cmd = cmd->nextcmd;
 	}
 }
 
-void child_2(char *argv[], char **envp, t_ms *s)
+void initialize(t_ppx *ppx,int *argc, char **argv[], char ***envp)
 {
-	char **to_exec;
-	int file_fd;
-
-	if ((file_fd = open(argv[4],O_WRONLY | O_CREAT | O_TRUNC | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) == -1) 	// se abre el primer archivo
-		error_exit(errno,"Open not succesful: ",argv[4], EXIT_FAILURE);
-
-	to_exec = ft_split(argv[3],' ');
-
-	make_dups(&s->fd_list[0], &file_fd);
-	close_fds(s->fd_list, &file_fd);
-	s->str = get_pathname(to_exec[0],envp[get_pathlocation(envp)]);
-	if (execve(s->str,to_exec ,envp) == -1)
+	if (*argc < 5) 														//comprobamos el numero de argumentos
+		exit(error_message(22, "Invalid number of args: ", *argv[0]));
+	ppx->path = get_pathlocation(*envp);								//a partir de envp conseguimos el string con los posibles paths
+	if(!ft_strncmp("heredoc",(*argv)[1],ft_strlen((*argv)[1]))) 		// determinamos si ay un argumento here doc
 	{
-		free(s->str);
-		free_matrix(to_exec);
-		exit(127);
+		ppx->heredoc = 1;
+		(*argv)++;
+		(*argc)--;
 	}
+	else
+		ppx->heredoc = 0; 												//si no hay heredoc
+	ppx->cmd = ft_tokargs(*argc,*argv);									// tokenizamos
 }
 
 void close_fds(int *fd_list, int *fd_in_out)
@@ -82,12 +60,3 @@ void close_fds(int *fd_list, int *fd_in_out)
 	close(fd_list[0]);
 	close(fd_list[1]);
 }
-
-void make_dups(int *new_stdin, int*new_stdout)
-{
-	if (dup2(*new_stdin,STDIN_FILENO) == -1) 	// se abre el primer archivo
-		error_exit(errno,"dup2: -> STDIN error:"," ", EXIT_FAILURE);
-	if(dup2(*new_stdout,STDOUT_FILENO) == -1) 	// se abre el primer archivo
-		error_exit(errno,"dup2: -> STDOUT error:"," ", EXIT_FAILURE);
-}
-
