@@ -1,5 +1,5 @@
 #include"pipex.h"
-int file_opener(char *infile, char* outfile,int hdoc_enabled, t_ms *cmd)
+int file_opener(char *infile, char* outfile,int hdoc_enabled, t_cmd *cmd)
 {
 	int readfile;
 	int writefile;
@@ -14,11 +14,11 @@ int file_opener(char *infile, char* outfile,int hdoc_enabled, t_ms *cmd)
 			error_message(errno,"Open not succesful: ",infile);
 	if (hdoc_enabled)
 	{
-		if ((writefile = open(outfile,O_CREAT | O_WRONLY | O_APPEND, 0644)) < 0)
+		if ((writefile = open(outfile,O_CREAT | O_WRONLY | O_APPEND, 00644)) < 0)
 			error_message(errno,"Open not succesful: ",outfile);
 	}
 	else
-		if((writefile = open(outfile,O_CREAT | O_WRONLY | O_TRUNC, 0644)) < 0)
+		if((writefile = open(outfile,O_CREAT | O_WRONLY | O_TRUNC, 00644)) < 0)
 			error_message(errno,"Open not succesful: ",outfile);
 	if(writefile < 0 || readfile < 0)
 		return(-1);
@@ -26,7 +26,7 @@ int file_opener(char *infile, char* outfile,int hdoc_enabled, t_ms *cmd)
 	return(0);
 }
 
-void assing_in_out_fd(t_ms *cmd,int readfile, int writefile)
+void assing_in_out_fd(t_cmd *cmd,int readfile, int writefile)
 {
 	if (cmd->fd_list[0] >= 0)
 		close(cmd->fd_list[0]);

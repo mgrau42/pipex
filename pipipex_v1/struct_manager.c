@@ -1,10 +1,10 @@
 #include"pipex.h"
 
-t_ms *ft_tokargs(int argc, char *argv[])
+t_cmd *ft_tokargs(int argc, char *argv[])
 {
 	int i;
-	t_ms	*cmd;
-	t_ms	*tmp;
+	t_cmd	*cmd;
+	t_cmd	*tmp;
 
 	i = 2;
 	cmd = new_cmd(argv[i++]); //creo una lista de estructuras enlazada con un comando en cada una
@@ -23,9 +23,9 @@ t_ms *ft_tokargs(int argc, char *argv[])
 	return(cmd);
 }
 
-void del_cmd_lst(t_ms *cmd)
+void del_cmd_lst(t_cmd *cmd)
 {
-	t_ms *tmp;
+	t_cmd *tmp;
 	while (cmd)
 	{
 		tmp = cmd->nextcmd;
@@ -36,13 +36,13 @@ void del_cmd_lst(t_ms *cmd)
 	}
 }
 
-t_ms	*new_cmd(char *cmd)
+t_cmd	*new_cmd(char *cmd)
 {
-	t_ms	*new;
+	t_cmd	*new;
 
 	if(!cmd)
 		return(NULL);
-	if (!(new = (t_ms *)malloc(sizeof(t_ms))))
+	if (!(new = (t_cmd *)malloc(sizeof(t_cmd))))
 		return(NULL);
 	new->argv = ft_split(cmd, ' ');
 	new->argc = ft_strlen((void *)new->argv);

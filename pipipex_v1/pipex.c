@@ -23,7 +23,7 @@ void finisher(t_ppx *ppx)
 		unlink("/tmp/heredoc");
 }
 
-void pied_piper(t_ms *cmd)
+void pied_piper(t_cmd *cmd)
 {
 	int fd_tmp[2];
 

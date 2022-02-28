@@ -1,6 +1,6 @@
 #include"pipex.h"
 
-void	redirect(t_ms *current)
+void	redirect(t_cmd *current)
 {
 	if (current->prev)
 		close(current->prev[1]);
@@ -14,7 +14,7 @@ void	redirect(t_ms *current)
 	close(current->fd_list[1]);
 }
 
-void launcher(t_ms *cmd,char *path,char **envp)
+void launcher(t_cmd *cmd,char *path,char **envp)
 {
 	pid_t pid;
 	char *to_exec;
@@ -39,9 +39,9 @@ void launcher(t_ms *cmd,char *path,char **envp)
 	}
 }
 
-int executer(t_ms **cmd,char *path,char **envp)
+int executer(t_cmd **cmd,char *path,char **envp)
 {
-	t_ms *tmp;
+	t_cmd *tmp;
 	int status;
 
 	status = 0;
