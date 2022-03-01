@@ -46,4 +46,6 @@ typedef struct s_ppx
 	void assing_in_out_fd(t_cmd *cmd,int readfile, int writefile);
 	int  heredoc_opener(char * file);
 	void pied_piper(t_cmd *cmd);
+	int	read_open(char *infile, int hdoc_enabled);
+	int	write_open(char *outfile, int hdoc_enabled);
 #endif
