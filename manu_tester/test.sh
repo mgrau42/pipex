@@ -178,6 +178,7 @@ printf "${YELLOW}*****************${RESET}\n\n"
 #test bonus 1
 printf "${YELLOW}*****************${RESET}\n"
 printf "${GREEN}BONUS TEST 01  ${YELLOW}ls -l| grep u | wc -l${RESET}\n"
+printf "${WHITE}expected output: ${RESET}\n"
 < files/infile1 ls -l| grep u | wc -l > files/outfile1
 cat files/outfile1
 printf ""
@@ -194,6 +195,37 @@ printf $?
 printf "\n"
 printf "${YELLOW}*****************${RESET}\n\n"
 
+
+#test bonus 2
+printf "${YELLOW}*****************${RESET}\n"
+printf "${GREEN}BONUS TEST 02  ${YELLOW}ls - l << LIMITER | wc - l >> file${RESET}\n"
+printf "${WHITE}expected output: ${RESET}\n"
+cat <<EOF | wc -l >> files/outfile1
+1
+2
+3
+EOF
+cat files/outfile1
+printf ""
+printf "${WHITE}status: ${RESET}\n"
+cat <<EOF | wc -l >> files/outfile1
+1
+2
+3
+
+EOF
+printf $?
+printf "\n"
+printf "${WHITE}my output: ${RESET}\n"
+../pipex here_doc "EOF" "cat" "wc -l" "files/outfile2"
+cat files/outfile2
+printf "${WHITE}status: ${RESET}\n"
+../pipex here_doc "EOF" "cat" "wc -l" "files/outfile2"
+printf $?
+printf "\n"
+printf "${YELLOW}*****************${RESET}\n\n"
 printf "Cleaning files"
+
+
 rm -rf files/outfile1 files/outfile2
 touch files/outfile1 files/outfile2

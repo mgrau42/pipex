@@ -6,7 +6,7 @@
 /*   By: mgrau <mgrau@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 11:40:05 by mgrau             #+#    #+#             */
-/*   Updated: 2022/03/07 14:15:10 by mgrau            ###   ########.fr       */
+/*   Updated: 2022/03/10 12:17:58 by mgrau            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	initialize(t_ppx *ppx, int *argc, char **argv[], char ***envp)
 	if (*argc < 5)
 		exit(error_message(22, "Invalid number of args: ", *argv[0]));
 	ppx->path = get_pathlocation(*envp);
-	if (!ft_strncmp("heredoc", (*argv)[1], ft_strlen((*argv)[1])))
+	if (!ft_strncmp("here_doc", (*argv)[1], ft_strlen((*argv)[1])))
 	{
 		ppx->heredoc = 1;
 		(*argv)++;

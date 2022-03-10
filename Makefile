@@ -12,6 +12,7 @@ $(NAME): $(OBJS)
 	
 $(LIBFT):
 	make -C ./includes/libft
+bonus: re
 
 .PHONY: clean fclean re bonus all
 
