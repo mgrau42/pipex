@@ -29,7 +29,12 @@
 ## Author
 
 Manuel Alejandro Grau Bastidas
+ 
 Desarrollador de Software - Comunidad de Madrid - España
+ 
 E-mail: manuelgb94@gmail.com
+ 
 Teléfono: +34 676 18 02 00
+ 
 https://www.linkedin.com/in/manuel-grau-bastidas/
+ 
