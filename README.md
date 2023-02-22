@@ -14,11 +14,7 @@
 
 1. Clone the repository.
 2. Open the command line and navigate to the cloned repository.
-3. Add you OpenAI API key to AICaller.py.
-4. Run the `readme_generator.py` script.
-5. The README file will be generated in the same directory as the script.
-6. Still a work in progress, but rn you can grasp the general idea.
-7. Check you readme througly, This OpenAi model is NOT finetunned, tends to hallucinate.
+3. ./pipex infile "ls -l" "wc -l" outfile behaves like < infile ls -l | wc -l > outfile
 
 ## Index of Useful Resources
 
