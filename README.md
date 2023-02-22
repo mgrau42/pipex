@@ -22,9 +22,7 @@
 
 ## Index of Useful Resources
 
-- [C Programming Tutorial](https://www.programiz.com/c-programming-tutorial)
 - [C Programming Language Tutorial](https://www.tutorialspoint.com/cprogramming/)
-- [C Programming Guide](https://www.guru99.com/c-programming-tutorial.html)
 - [C Programming Reference](https://www.cprogramming.com/tutorial/c-tutorial.html)
 - [C Programming Examples](https://www.programiz.com/c-programming/examples)
 
