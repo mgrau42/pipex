@@ -1,4 +1,4 @@
-<h1 align="center"> Pipex <h1> 
+<div><h1 align="center"> Pipex <h1></div> 
 
  This repository contains the source code for Pipex, a C program that imitates the behavior of the shell command < infile cmd1 | cmd2 > outfile. The goal of this project is to demonstrate how the shell behaves when it needs to redirect the STDIN and the STDOUT, and to show how this behavior can be reproduced using the C programming language. The program is written in C and includes examples of how to use the "<", "<<", ">", and ">>" operators.
 
